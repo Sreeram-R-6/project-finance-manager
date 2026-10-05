@@ -1,0 +1,15 @@
+# Copy to .env.local and fill real values.
+
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+
+# Server-only if implementation genuinely requires it.
+# Never expose as NEXT_PUBLIC_.
+SUPABASE_SERVICE_ROLE_KEY=
+
+# Google credentials are normally configured in Supabase Auth provider settings.
+# Keep any app-side values only if implementation specifically requires them.
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=

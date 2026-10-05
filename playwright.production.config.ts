@@ -1,0 +1,2 @@
+import { defineConfig, devices } from '@playwright/test';
+export default defineConfig({testDir:'tests/pwa',outputDir:'test-results/pwa',use:{baseURL:'http://localhost:3001',trace:'retain-on-failure'},projects:[{name:'desktop',use:devices['Desktop Chrome']},{name:'mobile',use:devices['Pixel 7']}],webServer:{command:'npm run start -- --port 3001',url:'http://localhost:3001',reuseExistingServer:false,timeout:120000}});

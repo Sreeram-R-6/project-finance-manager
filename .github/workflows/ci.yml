@@ -1,0 +1,32 @@
+name: Verify
+on: [push, pull_request]
+jobs:
+  application:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run supabase:start
+      - run: npm run db:reset
+      - run: node scripts/local-env.mjs
+      - run: npm run db:types
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run test:db
+      - run: npm test
+      - run: npm run test:e2e
+      - run: npm run build
+      - run: npm run test:pwa
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: browser-failures
+          path: test-results/
+      - run: npm run supabase:stop
+        if: always()

@@ -1,0 +1,4 @@
+[mcp_servers.supabase_project]
+url = "https://mcp.supabase.com/mcp?project_ref=httkdzvonkupukjlfwxf&read_only=true&features=database,docs"
+startup_timeout_sec = 20
+default_tools_approval_mode = "prompt"

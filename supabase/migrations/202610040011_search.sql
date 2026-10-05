@@ -1,0 +1,15 @@
+create index purchases_search on public.purchases using gin(to_tsvector('simple',coalesce(notes,'')||' '||coalesce(invoice_number,'')));
+create index vendor_search on public.vendors using gin(to_tsvector('simple',name));
+create index items_search on public.purchase_items using gin(to_tsvector('simple',description));
+create function public.search_records(p_query text,p_project uuid default null) returns jsonb language plpgsql stable security definer set search_path='' as $$ declare r jsonb; begin if auth.uid() is null then raise exception 'AUTH_REQUIRED'; end if; if length(trim(p_query))<2 then return '[]'; end if; if length(p_query)>100 then raise exception 'QUERY_TOO_LONG'; end if; select coalesce(jsonb_agg(to_jsonb(x)),'[]') into r from (select id,project_id,section,label from (
+select p.id,p.id project_id,'' section,p.name label from public.projects p where private.member(p.id) and (p_project is null or p.id=p_project) and (p.name ilike '%'||p_query||'%' or p.code ilike '%'||p_query||'%')
+union all select p.id,p.project_id,'purchases',coalesce(nullif(p.notes,''),p.invoice_number,'Purchase') from public.purchases p where private.member(p.project_id) and (p_project is null or p.project_id=p_project) and (to_tsvector('simple',coalesce(p.notes,'')||' '||coalesce(p.invoice_number,'')) @@ plainto_tsquery('simple',p_query) or exists(select 1 from public.purchase_items i where i.purchase_id=p.id and to_tsvector('simple',i.description) @@ plainto_tsquery('simple',p_query)))
+union all select v.id,v.project_id,'vendors',v.name from public.vendors v where private.member(v.project_id) and (p_project is null or v.project_id=p_project) and v.name ilike '%'||p_query||'%'
+union all select b.id,b.project_id,'bills',coalesce(b.invoice_number,b.notes,'Bill') from public.bills b where private.member(b.project_id) and (p_project is null or b.project_id=p_project) and (coalesce(b.invoice_number,'')||' '||coalesce(b.notes,'')) ilike '%'||p_query||'%'
+union all select a.id,a.project_id,'assets',a.name from public.assets a where private.member(a.project_id) and (p_project is null or a.project_id=p_project) and (a.name||' '||coalesce(a.asset_tag,'')) ilike '%'||p_query||'%'
+union all select d.id,d.project_id,'documents',d.original_filename from public.documents d where private.member(d.project_id) and (p_project is null or d.project_id=p_project) and d.original_filename ilike '%'||p_query||'%'
+union all select e.id,e.project_id,'transactions',e.description from public.financial_events e where private.member(e.project_id) and (p_project is null or e.project_id=p_project) and (e.description||' '||coalesce(e.reference_number,'')) ilike '%'||p_query||'%'
+union all select m.id,m.project_id,'people',pr.full_name from public.project_members m join public.profiles pr on pr.id=m.user_id where private.member(m.project_id) and (p_project is null or m.project_id=p_project) and pr.full_name ilike '%'||p_query||'%'
+) results limit 50) x;return r; end $$;
+revoke all on function public.search_records(text,uuid) from public;
+grant execute on function public.search_records(text,uuid) to authenticated;

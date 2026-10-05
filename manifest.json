@@ -1,0 +1,25 @@
+{
+  "name": "Project Finance Manager Codex Handoff Kit",
+  "version": "1.0",
+  "purpose": "Specification-only handoff package for Codex; does not contain the finished website.",
+  "entrypoint": "CODEX_MASTER_PROMPT.md",
+  "files": [
+    "AUTH_RLS_SECURITY.md",
+    "CODEX_MASTER_PROMPT.md",
+    "CODEX_MASTER_PROMPT.txt",
+    "DATA_MODEL.md",
+    "DOCUMENT_GENERATOR.md",
+    "ENV_EXAMPLE.txt",
+    "LEDGER_RULES.md",
+    "PRODUCT_SPEC.md",
+    "README.md",
+    "REPORTING.md",
+    "SEED_DATA.md",
+    "SOURCE_NOTES.md",
+    "SUPABASE_SETUP.md",
+    "TARGET_REPO_STRUCTURE.md",
+    "TESTING_ACCEPTANCE.md",
+    "UX_UI_SPEC.md",
+    "WORKFLOWS.md"
+  ]
+}

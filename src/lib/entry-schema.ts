@@ -1,0 +1,47 @@
+import { z } from "zod";
+export const schema = z.object({
+  description: z.string().default(""),
+  amount: z.string().default("0"),
+  shipping: z.string().default("0"),
+  date: z.string(),
+  due_date: z.string().default(""),
+  vendor_id: z.string().default(""),
+  category_id: z.string().default(""),
+  account_id: z.string().default(""),
+  member_user_id: z.string().default(""),
+  source_id: z.string().default(""),
+  type: z.string().default("FUNDING"),
+  name: z.string().default(""),
+  payment_method: z.string().default(""),
+  transaction_reference: z.string().default(""),
+  purchased_by_user_id: z.string().default(""),
+  corrects_event_id: z.string().default(""),
+  invoice_number: z.string().default(""),
+  notes: z.string().default(""),
+  purpose: z.string().default(""),
+  tags: z.string().default(""),
+  title: z.string().default(""),
+  start_date: z.string().default(""),
+  end_date: z.string().default(""),
+  source_type: z.string().default("PROJECT_ACCOUNT"),
+  advance_id: z.string().default(""),
+  linked_request_id: z.string().default(""),
+  items: z.array(
+    z.object({
+      description: z.string(),
+      quantity: z.string(),
+      price: z.string(),
+      tax: z.string(),
+      discount: z.string(),
+      asset: z.boolean(),
+    }),
+  ),
+  allocations: z.array(
+    z.object({
+      source_type: z.string(),
+      target: z.string(),
+      amount: z.string(),
+    }),
+  ),
+});
+export type EntryInput = z.input<typeof schema>;
